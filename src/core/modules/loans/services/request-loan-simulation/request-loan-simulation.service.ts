@@ -1,8 +1,9 @@
 import { INSUFFICIENT_INSTALLMENT_VALUE_ERROR } from '../../errors/insufficient-installment-value';
 import { MINIMUM_LOAN_NOT_REACHED_ERROR } from '../../errors/minimum-installment-not-reached';
 import { calculateInstallmentAmount } from '../../utils/calculate-installments-amount.util';
+import { CacheService } from '!shared/services/cache.service';
 
-type Request = {
+type TRequestLoanSimulationRequest = {
   cpf: string;
   uf: 'MG' | 'SP' | 'RJ' | 'ES';
   birthday: Date;
@@ -10,7 +11,7 @@ type Request = {
   installments: number;
 };
 
-type Response = {
+type TRequestLoanSimulationResponse = {
   id: string;
   requestedValue: number;
   interestRate: number;
@@ -18,21 +19,28 @@ type Response = {
   installmentsAmount: number;
   totalInterest: number;
   totalAmount: number;
-  simulation: {
+  bills: {
     outstandingBalance: number;
     interest: number;
     outstandingBalanceAdjusted: number;
     installmentAmount: number;
     due: Date;
   }[];
+  cpf: string;
+  birthday: Date;
+  uf: 'MG' | 'SP' | 'RJ' | 'ES';
 };
 
 class RequestLoanSimulationService {
+  constructor(private readonly cacheService: CacheService) {}
+
   async execute({
+    cpf,
+    birthday,
     uf,
     loan: amount,
     installments,
-  }: Request): Promise<Response> {
+  }: TRequestLoanSimulationRequest): Promise<TRequestLoanSimulationResponse> {
     const minimumAmountLoanAllowed = 50000;
     const minimumInstallmentsPercentage = 1 / 100; // 1%
     const interestRateByState = {
@@ -62,7 +70,7 @@ class RequestLoanSimulationService {
     let outstandingBalance = amount;
     let totalInterest = 0.0;
 
-    const simulation = Array(installmentsAmount)
+    const bills = Array(installmentsAmount)
       .fill({})
       .map((_, index) => {
         const interest = outstandingBalance * interestRate;
@@ -85,19 +93,24 @@ class RequestLoanSimulationService {
         return monthSimulation;
       });
 
-    const id = crypto.randomUUID();
-
-    return {
-      id,
+    const simulation = {
+      id: crypto.randomUUID(),
       requestedValue: amount,
-      interestRate: interestRate * 100,
+      interestRate,
       installments,
       installmentsAmount,
       totalInterest,
       totalAmount: amount + totalInterest,
-      simulation,
+      bills,
+      cpf,
+      birthday,
+      uf,
     };
+
+    await this.cacheService.setInCache(simulation.id, simulation);
+
+    return simulation;
   }
 }
 
-export { RequestLoanSimulationService };
+export { RequestLoanSimulationService, TRequestLoanSimulationResponse };

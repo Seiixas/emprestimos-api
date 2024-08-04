@@ -1,4 +1,4 @@
-import { AppError } from '../../../shared/errors/app-error.error';
+import { AppError } from '!shared/errors/app-error.error';
 
 class InsufficientInstallmentValue extends AppError {
   constructor() {

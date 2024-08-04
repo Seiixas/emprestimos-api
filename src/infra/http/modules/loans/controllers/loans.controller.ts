@@ -1,15 +1,22 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { RequestLoanSimulationService } from 'src/core/modules/loans/services/request-loan-simulation/request-loan-simulation.service';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { RequestLoanSimulationService } from '!modules/loans/services/request-loan-simulation/request-loan-simulation.service';
 import { RequestLoanSimulationDTO } from './dtos/request-loan-simulation.dto';
 import { ApiCreatedResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { INSUFFICIENT_INSTALLMENT_VALUE_ERROR } from 'src/core/modules/loans/errors/insufficient-installment-value';
-import { MINIMUM_LOAN_NOT_REACHED_ERROR } from 'src/core/modules/loans/errors/minimum-installment-not-reached';
+import { INSUFFICIENT_INSTALLMENT_VALUE_ERROR } from '!modules/loans/errors/insufficient-installment-value';
+import { MINIMUM_LOAN_NOT_REACHED_ERROR } from '!modules/loans/errors/minimum-installment-not-reached';
+import { ShowLoanSimulationService } from '!modules/loans/services/show-loan-simulation/show-loan-simulation.service';
+import { MakeLoanService } from '!modules/loans/services/make-loan/make-loan.service';
+import { SIMULATION_NOT_FOUND_ERROR } from '!modules/loans/errors/simulation-not-found';
+import { ShowLoanService } from '!modules/loans/services/show-loan/show-loan.service';
 
 @ApiTags('Loans')
 @Controller('loans')
 export class LoansController {
   constructor(
     private readonly requestLoanSimulationService: RequestLoanSimulationService,
+    private readonly showLoanSimulationService: ShowLoanSimulationService,
+    private readonly makeLoanService: MakeLoanService,
+    private readonly showLoanService: ShowLoanService,
   ) {}
 
   @Post('/simulation')
@@ -28,5 +35,39 @@ export class LoansController {
     return await this.requestLoanSimulationService.execute(
       requestLoanSimulationDTO,
     );
+  }
+
+  @Get('/simulation/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'Loan simulation found.',
+  })
+  async showLoanSimulation(@Param('id') id: string) {
+    return await this.showLoanSimulationService.execute({
+      id,
+    });
+  }
+
+  @Post('/:id')
+  @ApiResponse({
+    status: SIMULATION_NOT_FOUND_ERROR.statusCode,
+    description: SIMULATION_NOT_FOUND_ERROR.message,
+  })
+  @ApiCreatedResponse({ description: 'Loan requested.' })
+  async makeLoan(@Param('id') id: string) {
+    return await this.makeLoanService.execute({
+      simulationId: id,
+    });
+  }
+
+  @Get('/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'Loan found.',
+  })
+  async showLoan(@Param('id') id: string) {
+    return await this.showLoanService.execute({
+      id,
+    });
   }
 }
