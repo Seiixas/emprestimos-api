@@ -12,7 +12,7 @@ export class LoansController {
     private readonly requestLoanSimulationService: RequestLoanSimulationService,
   ) {}
 
-  @Post()
+  @Post('/simulation')
   @ApiCreatedResponse({ description: 'Loan simulation requested.' })
   @ApiResponse({
     status: INSUFFICIENT_INSTALLMENT_VALUE_ERROR.statusCode,
