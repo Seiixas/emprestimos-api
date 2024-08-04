@@ -12,10 +12,10 @@ describe('RequestLoanSimulationService', () => {
   it('should be able to simulate a loan request', async () => {
     const simulation = await requestLoanSimulationService.execute({
       uf: 'MG',
-      amount: 60000,
+      loan: 60000,
       installments: 15000,
       cpf: '11111111111',
-      birthDate: new Date('1990-01-01'),
+      birthday: new Date('1990-01-01'),
     });
 
     expect(simulation.interestRate).toBe(1);
@@ -26,10 +26,10 @@ describe('RequestLoanSimulationService', () => {
     expect(async () => {
       await requestLoanSimulationService.execute({
         uf: 'MG',
-        amount: 15000,
+        loan: 15000,
         installments: 15000,
         cpf: '11111111111',
-        birthDate: new Date('1990-01-01'),
+        birthday: new Date('1990-01-01'),
       });
     }).rejects.toBe(MINIMUM_LOAN_NOT_REACHED_ERROR);
   });
@@ -38,10 +38,10 @@ describe('RequestLoanSimulationService', () => {
     expect(async () => {
       await requestLoanSimulationService.execute({
         uf: 'MG',
-        amount: 60000,
+        loan: 60000,
         installments: 500,
         cpf: '11111111111',
-        birthDate: new Date('1990-01-01'),
+        birthday: new Date('1990-01-01'),
       });
     }).rejects.toBe(INSUFFICIENT_INSTALLMENT_VALUE_ERROR);
   });

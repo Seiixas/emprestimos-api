@@ -5,8 +5,8 @@ import { calculateInstallmentAmount } from '../../utils/calculate-installments-a
 type Request = {
   cpf: string;
   uf: 'MG' | 'SP' | 'RJ' | 'ES';
-  birthDate: Date;
-  amount: number;
+  birthday: Date;
+  loan: number;
   installments: number;
 };
 
@@ -28,7 +28,11 @@ type Response = {
 };
 
 class RequestLoanSimulationService {
-  async execute({ uf, amount, installments }: Request): Promise<Response> {
+  async execute({
+    uf,
+    loan: amount,
+    installments,
+  }: Request): Promise<Response> {
     const minimumAmountLoanAllowed = 50000;
     const minimumInstallmentsPercentage = 1 / 100; // 1%
     const interestRateByState = {
