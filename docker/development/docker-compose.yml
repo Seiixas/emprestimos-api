@@ -1,0 +1,68 @@
+version: '3'
+
+services:
+  api-hub-saas:
+    container_name: api
+    build:
+      context: ../..
+      dockerfile: docker/development/Dockerfile
+    tty: true
+    ports:
+      - 3000:3000
+    networks:
+      - emprestimos_network
+    volumes:
+      - ../../.:/usr/app/api/
+    env_file: ../../.env
+    environment:
+      - REDIS_URL=redis-db
+      - DATABASE_URL="postgresql://postgres:postgres@pgsql-db:5432/teste_tecnico?schema=public"
+      - PORT=3000
+    depends_on:
+      - 'pgsql-db'
+      - 'redis-db'
+    links:
+      - 'pgsql-db'
+      - 'redis-db'
+    entrypoint: wait-for pgsql-db:5432 -t 40 -- yarn start:dev
+  redis-db:
+    container_name: redis-db
+    image: redis:7.2.1-alpine
+    tty: true
+    restart: always
+    ports:
+      - 6379:6379
+    networks:
+      - emprestimos_network
+    volumes:
+      - reedisdata:/data
+
+  pgsql-db:
+    container_name: pgsql-db
+    image: postgres:16.0-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile.db.dev
+    tty: true
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=teste_tecnico
+    networks:
+      - emprestimos_network
+    volumes:
+      - pgdata:/data/postgres
+
+networks:
+  emprestimos_network:
+    name: development_emprestimos_network
+    driver: bridge
+
+volumes:
+  reedisdata:
+    driver: local
+  pgdata:
+    driver: local

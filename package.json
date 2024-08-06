@@ -24,7 +24,14 @@
     "migration:generate": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate --dataSource ./src/infra/persistence/typeorm/connection.ts -p",
     "migration:run": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run --dataSource ./src/infra/persistence/typeorm/connection.ts",
     "migration:show": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:show --dataSource ./src/infra/persistence/typeorm/connection.ts",
-    "migration:revert": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:revert --dataSource ./src/infra/persistence/typeorm/connection.ts"
+    "migration:revert": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:revert --dataSource ./src/infra/persistence/typeorm/connection.ts",
+    "docker:build": "docker compose -f ./docker/development/docker-compose.yml up -d --build",
+    "docker:up": "docker compose -f ./docker/development/docker-compose.yml up -d",
+    "docker:down": "docker compose -f ./docker/development/docker-compose.yml down",
+    "docker:start": "docker compose -f ./docker/development/docker-compose.yml start",
+    "docker:stop": "docker stop api",
+    "docker:logs": "docker logs -f api --tail 0",
+    "docker:terminal": "docker exec -it api /bin/sh"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
