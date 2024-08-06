@@ -2,7 +2,7 @@ import { DocumentBuilder, OpenAPIObject } from '@nestjs/swagger';
 
 type SwaggerConfig = Omit<OpenAPIObject, 'paths'>;
 
-const url = `http://localhost:3000`;
+const url = process.env.API_HOST;
 
 const swaggerConfig: SwaggerConfig = new DocumentBuilder()
   .setTitle('Loan Simulation API')

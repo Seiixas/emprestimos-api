@@ -38,6 +38,7 @@ Adicione as variáveis de ambiente:
 REDIS_URL=localhost
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/teste_tecnico?schema=public"
 PORT=3000
+API_HOST=http://localhost:3000
 ```
 
 Rode as migrations:

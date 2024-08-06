@@ -16,6 +16,7 @@ services:
     env_file: ../../.env
     environment:
       - REDIS_URL=redis-db
+      - API_HOST=http://localhost:3000
       - DATABASE_URL="postgresql://postgres:postgres@pgsql-db:5432/teste_tecnico?schema=public"
       - PORT=3000
     depends_on:
