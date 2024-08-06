@@ -2,6 +2,7 @@ import { INSUFFICIENT_INSTALLMENT_VALUE_ERROR } from '../../errors/insufficient-
 import { MINIMUM_LOAN_NOT_REACHED_ERROR } from '../../errors/minimum-installment-not-reached';
 import { calculateInstallmentAmount } from '../../utils/calculate-installments-amount.util';
 import { CacheService } from '!shared/services/cache.service';
+import { roundNumber } from '!modules/loans/utils/round-number.util';
 
 type TRequestLoanSimulationRequest = {
   cpf: string;
@@ -79,12 +80,15 @@ class RequestLoanSimulationService {
 
         const monthSimulation = {
           id: crypto.randomUUID(),
-          outstandingBalance,
-          interest,
-          outstandingBalanceAdjusted: outstandingBalance + interest,
+          outstandingBalance: roundNumber(outstandingBalance, 2),
+          interest: roundNumber(interest, 2),
+          outstandingBalanceAdjusted: roundNumber(
+            outstandingBalance + interest,
+            2,
+          ),
           installmentAmount: isLastInstallment
-            ? outstandingBalance + interest
-            : installments,
+            ? roundNumber(outstandingBalance + interest, 2)
+            : roundNumber(installments, 2),
           due: new Date(todaysDate.setMonth(todaysDate.getMonth() + index)),
         };
 

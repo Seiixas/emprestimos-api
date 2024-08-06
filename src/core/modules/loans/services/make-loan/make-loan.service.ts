@@ -6,6 +6,7 @@ import { LoanModel } from '!domain/loans/loan.entity';
 import { BillsModel } from '!domain/bills/bill.entity';
 import { BillsRepository } from '!domain/bills/bill.repository';
 import { SIMULATION_ALREADY_MADE_ERROR } from '!modules/loans/errors/simulation-already-made';
+import { parse } from 'date-fns';
 
 type Request = {
   simulationId: string;
@@ -55,7 +56,7 @@ class MakeLoanService {
       uf,
       installments,
       cpf,
-      birthday,
+      birthday: parse(String(birthday), 'dd/MM/yyyy', new Date()),
       installmentAmount: installmentsAmount,
       totalInterest,
       requestedValue,
