@@ -7,10 +7,7 @@ class IoRedisCacheRepository implements CacheRepository {
   private client: Redis;
   private readonly logger = new Logger(IoRedisCacheRepository.name);
   constructor() {
-    this.client = new Redis({
-      host: process.env.REDIS_URL,
-      port: 6379,
-    });
+    this.client = new Redis(process.env.REDIS_URL);
   }
 
   async connect() {
