@@ -1,3 +1,4 @@
+import { LoanModel } from '!domain/loans/loan.entity';
 import {
   Column,
   CreateDateColumn,
@@ -6,23 +7,22 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { LoanModel } from './loan.model';
 
-@Entity()
+@Entity({ name: 'bills' })
 export class BillsModel {
   @PrimaryColumn()
   id: string;
 
-  @Column({ name: 'outstanding_balance' })
+  @Column({ name: 'outstanding_balance', type: 'numeric' })
   outstandingBalance: number;
 
-  @Column({ name: 'interest' })
+  @Column({ name: 'interest', type: 'numeric' })
   interest: number;
 
-  @Column({ name: 'outstanding_balance_adjusted' })
+  @Column({ name: 'outstanding_balance_adjusted', type: 'numeric' })
   outstandingBalanceAdjusted: number;
 
-  @Column({ name: 'installment_amount' })
+  @Column({ name: 'installment_amount', type: 'numeric' })
   installmentAmount: number;
 
   @Column({ name: 'due' })
@@ -34,6 +34,6 @@ export class BillsModel {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt?: Date;
 
-  @ManyToOne(() => LoanModel, (loan) => loan.bills)
-  loan: LoanModel;
+  @ManyToOne(() => LoanModel, (loan) => loan.bills, { cascade: true })
+  loan?: LoanModel;
 }

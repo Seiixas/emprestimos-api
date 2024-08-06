@@ -1,4 +1,4 @@
-import { LoanEntity } from '!domain/loans/loan.entity';
+import { LoanModel } from '!domain/loans/loan.entity';
 import { LoansRepository } from '!domain/loans/loan.repository';
 import { SIMULATION_NOT_FOUND_ERROR } from '../../errors/simulation-not-found';
 
@@ -9,7 +9,7 @@ type Request = {
 class ShowLoanService {
   constructor(private readonly loansRepository: LoansRepository) {}
 
-  async execute({ id }: Request): Promise<LoanEntity> {
+  async execute({ id }: Request): Promise<LoanModel> {
     const loan = await this.loansRepository.findById(id);
 
     if (!loan) {

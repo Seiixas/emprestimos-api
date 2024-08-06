@@ -5,18 +5,26 @@ import { InMemoryCacheRepository } from '!infra/persistence/in-memory/repositori
 import { InMemoryLoansRepository } from '!infra/persistence/in-memory/repositories/in-memory-loans.repository';
 import { CacheRepository } from '!infra/persistence/cache/cache.repository';
 import { SIMULATION_NOT_FOUND_ERROR } from '../../errors/simulation-not-found';
+import { BillsRepository } from '!domain/bills/bill.repository';
+import { InMemoryBillsRepository } from '!infra/persistence/in-memory/repositories/in-memory-bills.repository';
 
 let cacheService: CacheService;
 let cacheRepository: CacheRepository;
 let makeLoanService: MakeLoanService;
 let loansRepository: LoansRepository;
+let billsRepository: BillsRepository;
 
 describe('MakeLoanService', () => {
   beforeEach(() => {
     cacheRepository = new InMemoryCacheRepository();
     cacheService = new CacheService(cacheRepository);
     loansRepository = new InMemoryLoansRepository();
-    makeLoanService = new MakeLoanService(cacheService, loansRepository);
+    billsRepository = new InMemoryBillsRepository();
+    makeLoanService = new MakeLoanService(
+      cacheService,
+      loansRepository,
+      billsRepository,
+    );
   });
 
   it('should be able to make a loan', async () => {

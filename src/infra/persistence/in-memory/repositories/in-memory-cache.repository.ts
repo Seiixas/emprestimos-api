@@ -13,4 +13,8 @@ export class InMemoryCacheRepository implements CacheRepository {
   async set(key: string, value: any): Promise<void> {
     this._cache[key] = JSON.stringify(value);
   }
+
+  async delete(key: string): Promise<void> {
+    delete this._cache[key];
+  }
 }

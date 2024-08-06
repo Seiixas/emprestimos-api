@@ -10,4 +10,8 @@ export class CacheService {
   async setInCache(key: string, value: any, ttl?: number): Promise<void> {
     return this.cacheRepository.set(key, value, ttl);
   }
+
+  async deleteFromCache(key: string): Promise<void> {
+    return this.cacheRepository.delete(key);
+  }
 }

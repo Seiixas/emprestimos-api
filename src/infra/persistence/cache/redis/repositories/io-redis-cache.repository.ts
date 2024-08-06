@@ -35,6 +35,10 @@ class IoRedisCacheRepository implements CacheRepository {
       await this.client.set(key, stringValue);
     }
   }
+
+  async delete(key: string): Promise<void> {
+    await this.client.del(key);
+  }
 }
 
 export { IoRedisCacheRepository };

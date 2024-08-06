@@ -20,6 +20,7 @@ type TRequestLoanSimulationResponse = {
   totalInterest: number;
   totalAmount: number;
   bills: {
+    id: string;
     outstandingBalance: number;
     interest: number;
     outstandingBalanceAdjusted: number;
@@ -77,6 +78,7 @@ class RequestLoanSimulationService {
         const isLastInstallment = index === installmentsAmount - 1;
 
         const monthSimulation = {
+          id: crypto.randomUUID(),
           outstandingBalance,
           interest,
           outstandingBalanceAdjusted: outstandingBalance + interest,

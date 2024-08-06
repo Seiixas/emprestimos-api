@@ -2,7 +2,7 @@ import { SIMULATION_NOT_FOUND_ERROR } from '../../errors/simulation-not-found';
 import { ShowLoanService } from './show-loan.service';
 import { LoansRepository } from '!domain/loans/loan.repository';
 import { InMemoryLoansRepository } from '!infra/persistence/in-memory/repositories/in-memory-loans.repository';
-import { LoanEntity } from '!domain/loans/loan.entity';
+import { LoanModel } from '!domain/loans/loan.entity';
 
 let showLoanSimulationService: ShowLoanService;
 let loansRepository: LoansRepository;
@@ -14,21 +14,23 @@ describe('ShowLoanService', () => {
   });
 
   it('should be able to show a loan', async () => {
-    await loansRepository.save(
-      new LoanEntity({
-        id: '123',
-        interestRate: 0.01,
-        bills: [],
-        uf: 'MG',
-        installments: 15000,
-        totalInterest: 0,
-        totalAmount: 60000,
-        requestedValue: 60000,
-        cpf: '11111111111',
-        installmentsAmount: 15000,
-        birthday: new Date('1990-01-01'),
-      }),
-    );
+    const loan = new LoanModel();
+
+    Object.assign(loan, {
+      id: '123',
+      interestRate: 0.01,
+      bills: [],
+      uf: 'MG',
+      installments: 15000,
+      totalInterest: 0,
+      totalAmount: 60000,
+      requestedValue: 60000,
+      cpf: '11111111111',
+      installmentsAmount: 15000,
+      birthday: new Date('1990-01-01'),
+    });
+
+    await loansRepository.save(loan);
 
     const simulation = await showLoanSimulationService.execute({ id: '123' });
 

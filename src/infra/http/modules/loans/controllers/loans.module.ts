@@ -8,6 +8,7 @@ import { MakeLoanService } from '!modules/loans/services/make-loan/make-loan.ser
 import { LoansRepository } from '!domain/loans/loan.repository';
 import { DatabaseModule } from '../../database/database.module';
 import { ShowLoanService } from '!modules/loans/services/show-loan/show-loan.service';
+import { BillsRepository } from '!domain/bills/bill.repository';
 
 @Module({
   controllers: [LoansController],
@@ -29,8 +30,9 @@ import { ShowLoanService } from '!modules/loans/services/show-loan/show-loan.ser
       useFactory: (
         cacheService: CacheService,
         loansRepository: LoansRepository,
-      ) => new MakeLoanService(cacheService, loansRepository),
-      inject: [CacheService, LoansRepository],
+        billsRepository: BillsRepository,
+      ) => new MakeLoanService(cacheService, loansRepository, billsRepository),
+      inject: [CacheService, LoansRepository, BillsRepository],
     },
     {
       provide: ShowLoanService,

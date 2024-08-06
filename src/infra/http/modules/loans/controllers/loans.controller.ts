@@ -8,6 +8,7 @@ import { ShowLoanSimulationService } from '!modules/loans/services/show-loan-sim
 import { MakeLoanService } from '!modules/loans/services/make-loan/make-loan.service';
 import { SIMULATION_NOT_FOUND_ERROR } from '!modules/loans/errors/simulation-not-found';
 import { ShowLoanService } from '!modules/loans/services/show-loan/show-loan.service';
+import { SIMULATION_ALREADY_MADE_ERROR } from '!modules/loans/errors/simulation-already-made';
 
 @ApiTags('Loans')
 @Controller('loans')
@@ -52,6 +53,10 @@ export class LoansController {
   @ApiResponse({
     status: SIMULATION_NOT_FOUND_ERROR.statusCode,
     description: SIMULATION_NOT_FOUND_ERROR.message,
+  })
+  @ApiResponse({
+    status: SIMULATION_ALREADY_MADE_ERROR.statusCode,
+    description: SIMULATION_ALREADY_MADE_ERROR.message,
   })
   @ApiCreatedResponse({ description: 'Loan requested.' })
   async makeLoan(@Param('id') id: string) {

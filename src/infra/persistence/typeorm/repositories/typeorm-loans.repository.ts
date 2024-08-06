@@ -1,8 +1,7 @@
-import { LoansRepository } from '!domain/loans/loan.repository';
 import { Repository } from 'typeorm';
-import { LoanModel } from '../models/loan.model';
-import { LoanMapper } from '../mappers/loan.mapper';
-import { LoanEntity } from '!domain/loans/loan.entity';
+
+import { LoansRepository } from '!domain/loans/loan.repository';
+import { LoanModel } from '!domain/loans/loan.entity';
 
 class TypeORMLoansRepository implements LoansRepository {
   constructor(private readonly _repository: Repository<LoanModel>) {}
@@ -11,18 +10,19 @@ class TypeORMLoansRepository implements LoansRepository {
     await this._repository.save(loan);
   }
 
-  async findById(id: string): Promise<LoanEntity | null> {
+  async findById(id: string): Promise<LoanModel | null> {
     const loan = await this._repository.findOne({
       where: { id },
+      relations: ['bills'],
     });
 
-    return LoanMapper.toLocal(loan) ?? null;
+    return loan;
   }
 
-  async findAll(): Promise<LoanEntity[]> {
+  async findAll(): Promise<LoanModel[]> {
     const loans = await this._repository.find();
 
-    return loans.map((loan) => LoanMapper.toLocal(loan));
+    return loans;
   }
 }
 
