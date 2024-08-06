@@ -29,6 +29,7 @@ describe('MakeLoanService', () => {
 
   it('should be able to make a loan', async () => {
     await cacheService.setInCache('123', {
+      id: '123',
       uf: 'MG',
       loan: 60000,
       installments: 15000,

@@ -7,6 +7,7 @@ import { BillsModel } from '!domain/bills/bill.entity';
 import { BillsRepository } from '!domain/bills/bill.repository';
 import { SIMULATION_ALREADY_MADE_ERROR } from '!modules/loans/errors/simulation-already-made';
 import { parse } from 'date-fns';
+import { DATABASE_ERROR } from '!shared/errors/database-error.error';
 
 type Request = {
   simulationId: string;
@@ -23,16 +24,16 @@ class MakeLoanService {
     const simulation: TRequestLoanSimulationResponse =
       await this.cacheService.getFromCache(simulationId);
 
+    if (!simulation) {
+      throw SIMULATION_NOT_FOUND_ERROR;
+    }
+
     const simulationAlreadyMade = await this.loansRepository.findById(
       simulation.id,
     );
 
     if (simulationAlreadyMade) {
       throw SIMULATION_ALREADY_MADE_ERROR;
-    }
-
-    if (!simulation) {
-      throw SIMULATION_NOT_FOUND_ERROR;
     }
 
     const {
@@ -82,10 +83,13 @@ class MakeLoanService {
       return billEntity;
     });
 
-    await this.billsRepository.bulkSave(billEntities);
-    await this.loansRepository.save(loan);
-
-    await this.cacheService.deleteFromCache(simulationId);
+    try {
+      await this.billsRepository.bulkSave(billEntities);
+      await this.loansRepository.save(loan);
+      await this.cacheService.deleteFromCache(simulationId);
+    } catch (err) {
+      throw DATABASE_ERROR;
+    }
   }
 }
 

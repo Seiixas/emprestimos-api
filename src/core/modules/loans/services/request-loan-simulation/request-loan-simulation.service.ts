@@ -3,6 +3,10 @@ import { MINIMUM_LOAN_NOT_REACHED_ERROR } from '../../errors/minimum-installment
 import { calculateInstallmentAmount } from '../../utils/calculate-installments-amount.util';
 import { CacheService } from '!shared/services/cache.service';
 import { roundNumber } from '!modules/loans/utils/round-number.util';
+import { DATABASE_ERROR } from '!shared/errors/database-error.error';
+import { addMonths, compareAsc } from 'date-fns';
+import { UNDERAGE_NOT_ALLOWED } from '!modules/loans/errors/underage-not-allowed';
+import { DATE_NOT_VALID } from '!modules/loans/errors/date-not-valid';
 
 type TRequestLoanSimulationRequest = {
   cpf: string;
@@ -54,6 +58,16 @@ class RequestLoanSimulationService {
 
     const todaysDate = new Date();
 
+    const isBirthdayValid = compareAsc(birthday, todaysDate) === 1;
+    if (isBirthdayValid) {
+      throw DATE_NOT_VALID;
+    }
+
+    const isUnderage = addMonths(birthday, 18) > todaysDate;
+    if (isUnderage) {
+      throw UNDERAGE_NOT_ALLOWED;
+    }
+
     if (amount < minimumAmountLoanAllowed) {
       throw MINIMUM_LOAN_NOT_REACHED_ERROR;
     }
@@ -89,7 +103,7 @@ class RequestLoanSimulationService {
           installmentAmount: isLastInstallment
             ? roundNumber(outstandingBalance + interest, 2)
             : roundNumber(installments, 2),
-          due: new Date(todaysDate.setMonth(todaysDate.getMonth() + index)),
+          due: addMonths(todaysDate, index + 1),
         };
 
         totalInterest += monthSimulation.installmentAmount;
@@ -113,9 +127,12 @@ class RequestLoanSimulationService {
       uf,
     };
 
-    await this.cacheService.setInCache(simulation.id, simulation);
-
-    return simulation;
+    try {
+      await this.cacheService.setInCache(simulation.id, simulation);
+      return simulation;
+    } catch {
+      throw DATABASE_ERROR;
+    }
   }
 }
 

@@ -4,6 +4,8 @@ import { MINIMUM_LOAN_NOT_REACHED_ERROR } from '../../errors/minimum-installment
 import { RequestLoanSimulationService } from './request-loan-simulation.service';
 import { CacheService } from '!shared/services/cache.service';
 import { CacheRepository } from '!infra/persistence/cache/cache.repository';
+import { UNDERAGE_NOT_ALLOWED } from '!modules/loans/errors/underage-not-allowed';
+import { DATE_NOT_VALID } from '!modules/loans/errors/date-not-valid';
 
 let requestLoanSimulationService: RequestLoanSimulationService;
 let inMemoryCacheRepository: CacheRepository;
@@ -53,5 +55,29 @@ describe('RequestLoanSimulationService', () => {
         birthday: new Date('1990-01-01'),
       });
     }).rejects.toBe(INSUFFICIENT_INSTALLMENT_VALUE_ERROR);
+  });
+
+  it('should not be able to simulate a loan being an underage', () => {
+    expect(async () => {
+      await requestLoanSimulationService.execute({
+        uf: 'MG',
+        loan: 60000,
+        installments: 6000,
+        cpf: '11111111111',
+        birthday: new Date(),
+      });
+    }).rejects.toBe(UNDERAGE_NOT_ALLOWED);
+  });
+
+  it('should not be able to simulate a loan with invalid date', () => {
+    expect(async () => {
+      await requestLoanSimulationService.execute({
+        uf: 'MG',
+        loan: 60000,
+        installments: 6000,
+        cpf: '11111111111',
+        birthday: new Date('2025-01-01'),
+      });
+    }).rejects.toBe(DATE_NOT_VALID);
   });
 });

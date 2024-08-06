@@ -16,7 +16,10 @@ describe('RequestLoanSimulationService', () => {
   });
 
   it('should be able to show a simulated a loan', async () => {
-    await cacheService.setInCache('123', {});
+    await cacheService.setInCache('123', {
+      id: '123',
+      birthday: new Date('1990-01-01'),
+    });
 
     const simulation = await showLoanSimulationService.execute({ id: '123' });
 
