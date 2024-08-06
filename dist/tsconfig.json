@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "target": "ES2021",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "module": "commonjs",
+        "baseUrl": "./src",
+        "outDir": "./dist",
+        "paths": {
+            "!shared/*": ["core/shared/*"],
+            "!modules/*": ["core/modules/*"],
+            "!domain/*": ["domain/*"],
+            "!infra/*": ["infra/*"]
+        },
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "skipLibCheck": true
+    }
+}
