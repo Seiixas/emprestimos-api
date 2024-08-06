@@ -70,6 +70,10 @@ export class LoansController {
     status: 200,
     description: 'Loan found.',
   })
+  @ApiResponse({
+    status: SIMULATION_NOT_FOUND_ERROR.statusCode,
+    description: SIMULATION_NOT_FOUND_ERROR.message,
+  })
   async showLoan(@Param('id') id: string) {
     return await this.showLoanService.execute({
       id,
