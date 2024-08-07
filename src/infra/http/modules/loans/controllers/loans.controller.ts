@@ -9,6 +9,7 @@ import { MakeLoanService } from '!modules/loans/services/make-loan/make-loan.ser
 import { SIMULATION_NOT_FOUND_ERROR } from '!modules/loans/errors/simulation-not-found';
 import { ShowLoanService } from '!modules/loans/services/show-loan/show-loan.service';
 import { SIMULATION_ALREADY_MADE_ERROR } from '!modules/loans/errors/simulation-already-made';
+import { ListAllLoansService } from '!modules/loans/services/list-all-loans/list-all-loans.service';
 
 @ApiTags('Loans')
 @Controller('loans')
@@ -18,6 +19,7 @@ export class LoansController {
     private readonly showLoanSimulationService: ShowLoanSimulationService,
     private readonly makeLoanService: MakeLoanService,
     private readonly showLoanService: ShowLoanService,
+    private readonly listLoansService: ListAllLoansService,
   ) {}
 
   @Post('/simulation')
@@ -78,5 +80,14 @@ export class LoansController {
     return await this.showLoanService.execute({
       id,
     });
+  }
+
+  @Get()
+  @ApiResponse({
+    status: 200,
+    description: 'Loans found.',
+  })
+  async listLoans() {
+    return await this.listLoansService.execute();
   }
 }

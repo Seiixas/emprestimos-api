@@ -9,6 +9,7 @@ import { LoansRepository } from '!domain/loans/loan.repository';
 import { DatabaseModule } from '../../database/database.module';
 import { ShowLoanService } from '!modules/loans/services/show-loan/show-loan.service';
 import { BillsRepository } from '!domain/bills/bill.repository';
+import { ListAllLoansService } from '!modules/loans/services/list-all-loans/list-all-loans.service';
 
 @Module({
   controllers: [LoansController],
@@ -38,6 +39,12 @@ import { BillsRepository } from '!domain/bills/bill.repository';
       provide: ShowLoanService,
       useFactory: (loansRepository: LoansRepository) =>
         new ShowLoanService(loansRepository),
+      inject: [LoansRepository],
+    },
+    {
+      provide: ListAllLoansService,
+      useFactory: (loansRepository: LoansRepository) =>
+        new ListAllLoansService(loansRepository),
       inject: [LoansRepository],
     },
   ],
