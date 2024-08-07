@@ -20,7 +20,7 @@ class TypeORMLoansRepository implements LoansRepository {
   }
 
   async findAll(): Promise<LoanModel[]> {
-    const loans = await this._repository.find();
+    const loans = await this._repository.find({ relations: ['bills'] });
 
     return loans;
   }
